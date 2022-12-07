@@ -12,7 +12,7 @@ import { Counter } from './model/counter.model';
       synchronize: true,
       models: [Counter],
     }),
-    SequelizeModule.forFeature([Counter])
+    SequelizeModule.forFeature([Counter]),
   ],
   controllers: [AppController],
   providers: [AppService],

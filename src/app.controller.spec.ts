@@ -19,5 +19,10 @@ describe('AppController', () => {
       expect(appController.getLastListened()).resolves.not.toBeNull();
       expect(appController.getLastListened()).resolves.toHaveLength(100);
     });
+    it('should return top 10 list', () => {
+      expect(appController.getTop10Listened()).resolves.not.toBeNull();
+      console.log('top10', appController.getTop10Listened());
+      expect(appController.getTop10Listened()).resolves.toHaveLength(10);
+    });
   });
 });

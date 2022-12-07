@@ -52,7 +52,46 @@ export class AppController {
     }
     return records;
   }
+
+  @Get()
+  async getTop10Listened(): Promise<ListenedAlbum[]> {
+    const records: ListenedAlbum[] = [];
+    const csvFilePath = path.resolve(
+      __dirname,
+      'data/listened_albums_small.csv',
+    );
+
+    const parser = fs.createReadStream(csvFilePath, { encoding: 'utf-8' }).pipe(
+      parse({
+        delimiter: ';',
+        from_line: 2,
+        columns: [
+          'Id',
+          'Album Name',
+          'Artist Name',
+          'LastListenning',
+          'ListenedCount',
+        ],
+      }),
+    );
+
+    for await (const record of parser) {
+      const listenAlbum = new ListenedAlbum();
+      listenAlbum.id = record.Id;
+      listenAlbum.name = record['Album Name'];
+      listenAlbum.artistName = record['Artist Name'];
+      listenAlbum.listenedCount = record.ListenedCount;
+      listenAlbum.lastListened = new Date(record.LastListenning);
+      records.push(listenAlbum);
+    }
+
+    return records
+      .sort((a, b) => a.listenedCount - b.listenedCount)
+      .filter((a, idx) => idx < 10);
+  }
 }
+
+//plutôt que de lire le fichier CSV à chaque fois, utiliser la BDD sqlite montée au lancement du serveur
 
 class ListenedAlbum {
   id: string;
